@@ -8,25 +8,37 @@ import (
 	"image/color"
 )
 
+// UI widgets that should be updated on data changed
+var window fyne.Window
+var subscriptionsTabs *widget.TabContainer
+
 func buildServerList(size int) fyne.CanvasObject {
 	list := make([]fyne.CanvasObject, 0)
 	itemHeight := 64
 	for i := 0; i < size; i++ {
 		selectionIndicator := customWidget.NewColoredBox()
 		selectionIndicator.Resize(fyne.Size{Width: 8, Height: itemHeight})
-		selectionIndicator.SetBackgroundColor(red)
-		listItemContent := customWidget.NewTwoLineListItem("profile.Name", "SSOMONDFOJNDOFUENW")
-		list = append(list, fyne.NewContainerWithLayout(customWidget.NewStackLayout(), selectionIndicator, listItemContent))
+		selectionIndicator.SetBackgroundColor(color.RGBA{255, 0, 0, 255})
+		listItemContent := customWidget.NewTwoLineListItem("profile.Name", "Some text")
+		list = append(list, customWidget.NewTappableWidget(
+			fyne.NewContainerWithLayout(customWidget.NewStackLayout(), selectionIndicator, listItemContent),
+			func() {
+			}))
 	}
 	return widget.NewScrollContainer(widget.NewVBox(list...))
 }
 
-var red = color.RGBA{R: 255, G: 0, B: 0, A: 255}
+func buildTabs() []*widget.TabItem {
+	var item []*widget.TabItem
+	return item
+}
+
+var selectedIndicator *customWidget.ColoredBox
 
 func main() {
 	application := app.New()
 
-	window := application.NewWindow("SSD Go")
+	window = application.NewWindow("SSD Go")
 	window.Resize(fyne.Size{
 		Width:  1200,
 		Height: 800,
@@ -34,9 +46,10 @@ func main() {
 	window.CenterOnScreen()
 
 	// At least 1 tab is required, or index out of range is thrown
-	subscriptionsTabs := widget.NewTabContainer(
+	subscriptionsTabs = widget.NewTabContainer(
 		widget.NewTabItem("First", buildServerList(1)),
-		widget.NewTabItem("Second", buildServerList(160)))
+		widget.NewTabItem("Second", buildServerList(160)),
+	)
 	subscriptionsTabs.SetTabLocation(widget.TabLocationLeading)
 	window.SetContent(subscriptionsTabs)
 
